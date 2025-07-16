@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1">
+ <title></title>
+</head>
+
+<body>
+ 
+</body>
+
+</html>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Ethereum Ticket Purchase</title>
+  <style>
+    body {
+      background: #121212;
+      color: #fff;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #00ffc3;
+    }
+
+    form,
+    .ticket {
+      background: #1c1c1c;
+      padding: 20px;
+      border-radius: 10px;
+      margin-top: 20px;
+      box-shadow: 0 0 10px #00ffc3;
+    }
+
+    label {
+      display: block;
+      margin-top: 10px;
+    }
+
+    input {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      border: none;
+      border-radius: 5px;
+      background: #333;
+      color: #fff;
+    }
+
+    input[readonly] {
+      background: #222;
+      cursor: default;
+    }
+
+    button {
+      margin-top: 15px;
+      padding: 10px;
+      background: white;
+      color: #000;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .ticket {
+      display: none;
+    }
+
+    .ticket h3 {
+      color: #f1c40f;
+      text-align: center;
+    }
+
+    .barcode {
+      text-align: center;
+      font-size: 14px;
+      margin-top: 10px;
+      border-top: 1px dashed #555;
+      padding-top: 10px;
+      letter-spacing: 2px;
+    }
+
+    #ethPayment {
+      margin-top: 15px;
+      text-align: center;
+    }
+
+    #ethPayment p {
+      margin: 5px 0;
+    }
+
+    #ethPayment img {
+      margin-top: 10px;
+      border-radius: 8px;
+    }
+
+    #shareTicketBtn {
+      background: #8e44ad;
+      color: white;
+      margin-top: 15px;
+    }
+
+    #copyRegLinkBtn {
+      background: #3498db;
+      color: #fff;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h2>🎫 Book Your Ticket – Pay with Ethereum</h2>
+
+  <form id="ticketForm">
+    <label>Your Name:</label>
+    <input type="text" id="name" required />
+
+    <label>Singer:</label>
+    <input type="text" id="singer" value="DJ Lonz" readonly />
+
+    <label>Event Name:</label>
+    <input type="text" id="event" value="DJ Songs" readonly />
+
+    <label>Location:</label>
+    <input type="text" id="location" value="SMI TOWN GROUND" readonly />
+
+    <label>Date:</label>
+    <input type="text" id="date" value="23/06/2025" readonly />
+
+    <label>Time:</label>
+    <input type="text" id="time" value="5:00 PM" readonly />
+
+    <button type="submit">Generate Ticket</button>
+  </form>
+
+  <div class="ticket" id="ticketOutput">
+    <h3>Your Ticket</h3>
+    <p><strong>Name:</strong> <span id="outName"></span></p>
+    <p><strong>Singer:</strong> <span id="outSinger"></span></p>
+    <p><strong>Event:</strong> <span id="outEvent"></span></p>
+    <p><strong>Location:</strong> <span id="outLocation"></span></p>
+    <p><strong>Date:</strong> <span id="outDate"></span></p>
+    <p><strong>Time:</strong> <span id="outTime"></span></p>
+    <p><strong>Price:</strong> 1.1 ETH</p>
+    <div class="barcode">
+      Ticket ID: <span id="ticketCode"></span>
+    </div>
+
+    <button onclick="payWithEthereum()" style="margin-top: 15px; background: #8e44ad; color: white;">
+      🪙 Pay with Ethereum
+    </button>
+
+    <div id="ethPayment" style="display: none;">
+      <p><strong>Send exactly:</strong> <span style="color: #f1c40f;">1.1 ETH</span></p>
+      <p><strong>To this address:</strong></p>
+      <p style="word-wrap: break-word; font-size: 14px;">
+        0x3a072b2a02631414c32124c3d421663bff69bcfe
+      </p>
+      <img
+        src="https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=ethereum:0x3a072b2a02631414c32124c3d421663bff69bcfe?amount=1.1"
+        alt="ETH QR Code"
+      />
+      <p>Scan with MetaMask or Trust Wallet to send 1.1 ETH</p>
+      <button onclick="copyEthAddress()">📋 Copy Wallet Address</button>
+    </div>
+
+    <button id="shareTicketBtn" onclick="shareTicket()">📤 Share Ticket</button>
+    <button id="copyRegLinkBtn" onclick="copyRegistrationLink()">🔗 Copy Registration Link</button>
+  </div>
+
+  <script>
+    document.getElementById("ticketForm").addEventListener("submit", function (e) {
+      e.preventDefault();
+
+      const name = document.getElementById("name").value.trim();
+      if (!name) {
+        alert("Please enter your name.");
+        return;
+      }
+
+      const singer = document.getElementById("singer").value;
+      const event = document.getElementById("event").value;
+      const location = document.getElementById("location").value;
+      const date = document.getElementById("date").value;
+      const time = document.getElementById("time").value;
+
+      const code = Math.floor(100000 + Math.random() * 900000);
+
+      document.getElementById("outName").innerText = name;
+      document.getElementById("outSinger").innerText = singer;
+      document.getElementById("outEvent").innerText = event;
+      document.getElementById("outLocation").innerText = location;
+      document.getElementById("outDate").innerText = date;
+      document.getElementById("outTime").innerText = time;
+      document.getElementById("ticketCode").innerText = code;
+
+      document.getElementById("ticketOutput").style.display = "block";
+    });
+
+    function payWithEthereum() {
+      document.getElementById("ethPayment").style.display = "block";
+    }
+
+    function copyEthAddress() {
+      const address = "0x3a072b2a02631414c32124c3d421663bff69bcfe";
+      navigator.clipboard.writeText(address).then(() => {
+        alert("Ethereum wallet address copied to clipboard!");
+      });
+    }
+
+    function shareTicket() {
+      const name = document.getElementById("outName").innerText;
+      const singer = document.getElementById("outSinger").innerText;
+      const event = document.getElementById("outEvent").innerText;
+      const location = document.getElementById("outLocation").innerText;
+      const date = document.getElementById("outDate").innerText;
+      const time = document.getElementById("outTime").innerText;
+      const ticketId = document.getElementById("ticketCode").innerText;
+      const price = "1.1 ETH";
+      const registrationUrl = "https://yourusername.github.io/ticket-site/";
+
+      const ticketInfo = `🎫 Ticket Info:
+Name: ${name}
+Singer: ${singer}
+Event: ${event}
+Location: ${location}
+Date: ${date}
+Time: ${time}
+Ticket ID: ${ticketId}
+Price: ${price}
+
+Pay with Ethereum at address:
+0x3a072b2a02631414c32124c3d421663bff69bcfe
+
+Register yourself here to get your own ticket:
+${registrationUrl}
+
+(Scan the QR code or copy the address)`;
+
+      navigator.clipboard
+        .writeText(ticketInfo)
+        .then(() => alert("Ticket info with registration link copied to clipboard! Share it with others."))
+        .catch(() => alert("Failed to copy ticket info."));
+    }
+
+    function copyRegistrationLink() {
+      const registrationUrl = "https://yourusername.github.io/ticket-site/";
+      navigator.clipboard
+        .writeText(registrationUrl)
+        .then(() => alert("Registration link copied to clipboard!"))
+        .catch(() => alert("Failed to copy registration link."));
+    }
+  </script>
+</body>
+</html>
